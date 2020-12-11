@@ -1,0 +1,112 @@
+/*
+
+I've included a class called .background-image that is how you can perfectly fill a webpage with a background image.
+(It's a pain in the butt to google this. I included the best link I found in the solution.)
+
+Then on your HTML file, create a div that wraps your entire content on the landing page and give it this class.
+
+Example:
+
+<div class="background-image">
+   <div class="container">
+      <!-- More html here -->
+   </div>
+</div>
+
+*/
+
+.background-image {
+   /* https://css-tricks.com/perfect-full-page-background-image/ */
+   background: url("../images/background-landing.jpg") no-repeat center center
+      fixed;
+   background-size: cover;
+   min-height: 100vh;
+}
+
+// .body-cover {
+//    background: url("/images/background-landing.jpg") no-repeat center center
+//       fixed;
+//    -webkit-background-size: cover;
+//    -moz-background-size: cover;
+//    background-size: cover;
+//    -o-background-size: cover;
+// }
+
+.text-brand {
+   font-family: $font-family-brand;
+}
+
+h1 {
+   color: $white;
+}
+
+h2 {
+   font-family: "Noto Serif", serif;
+}
+
+.btn-link {
+   font-weight: $font-weight-bold;
+   padding-left: 0;
+   padding-right: 0;
+   border: none;
+}
+.btn-group .btn {
+   font-weight: $font-weight-normal;
+}
+
+.card-body {
+   color: $white;
+   font-family: $font-family-serif;
+}
+
+.card-body-padding {
+   padding: 16px;
+}
+.card-body.bg-primary {
+   border-top-left-radius: $border-radius;
+   border-top-right-radius: $border-radius;
+}
+
+.card-body.bg-secondary {
+   border-bottom-left-radius: $border-radius;
+   border-bottom-right-radius: $border-radius;
+}
+
+.tab-active {
+   background-color: $dark;
+   border: $dark solid;
+}
+.tab-separator {
+   border-left: 1px $dark solid;
+}
+
+textarea {
+   width: 100%;
+   background-color: transparent;
+   color: $white;
+
+   // remove all styling https://stackoverflow.com/a/17110012
+   border: none;
+   overflow: auto;
+   outline: none;
+
+   -webkit-box-shadow: none;
+   -moz-box-shadow: none;
+   box-shadow: none;
+
+   resize: none;
+}
+
+.bg-success,
+.bg-danger {
+   color: $white;
+}
+
+.someclass {
+   background-size: cover;
+}
+
+.disabled {
+   pointer-events: fill !important;
+   cursor: not-allowed;
+}
