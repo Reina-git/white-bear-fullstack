@@ -10,11 +10,35 @@ const selectAllCards = require("../../queries/selectAllCards");
 router.get("/", (req, res) => {
    console.log(req.query);
    const { userId, searchTerm, order } = req.query;
-
-   db.query(selectAllCards(userId, searchTerm, order))
-      .then((dbRes) => {
-         // console.log(dbRes);
-         res.json(dbRes);
+   let constructedSearchTerm;
+   if (searchTerm === "" || searchTerm === undefined) {
+      constructedSearchTerm = "%%";
+   } else {
+      constructedSearchTerm = `%${searchTerm}%`;
+   }
+   console.log(constructedSearchTerm);
+   /* https://www.npmjs.com/package/mysql#escaping-query-values */
+   db.query(selectAllCards, [
+      userId,
+      constructedSearchTerm,
+      constructedSearchTerm,
+      { toSqlString: () => order },
+   ])
+      .then((memoryCards) => {
+         const camelCaseMemoryCards = memoryCards.map((memoryCard) => {
+            return {
+               id: memoryCard.id,
+               imagery: memoryCard.imagery,
+               answer: memoryCard.answer,
+               userId: memoryCard.user_id,
+               createdAt: memoryCard.created_at,
+               nextAttemptAt: memoryCard.nextAttempt_at,
+               lastAttemptAt: memoryCard.lastAttempt_at,
+               totalSuccessfulAttempts: memoryCard.total_successful_attempts,
+               level: memoryCard.level,
+            };
+         });
+         res.json(camelCaseMemoryCards);
       })
       .catch((err) => {
          console.log(err);
