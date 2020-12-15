@@ -4,7 +4,6 @@ import hash from "object-hash";
 import { v4 as getUuid } from "uuid";
 import { withRouter } from "react-router-dom";
 import { EMAIL_REGEX } from "../../utils/helpers";
-import orderBy from "lodash/orderBy";
 import axios from "axios";
 import actions from "../../store/actions";
 import { connect } from "react-redux";

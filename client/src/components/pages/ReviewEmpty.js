@@ -1,6 +1,5 @@
 import React from "react";
 import AppTemplate from "../ui/AppTemplate";
-import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import actions from "../../store/actions";
 

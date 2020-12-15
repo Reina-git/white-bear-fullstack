@@ -6,11 +6,7 @@ import memoryCards from "../../mock-data/memory-cards";
 import toDisplayDate from "date-fns/format";
 import classnames from "classnames";
 import { connect } from "react-redux";
-import {
-   checkIsOver,
-   MAX_CARD_CHARS,
-   safelyParseJson,
-} from "../../utils/helpers";
+import { checkIsOver, MAX_CARD_CHARS } from "../../utils/helpers";
 import isEmpty from "lodash/isEmpty";
 import without from "lodash/without";
 import actions from "../../store/actions";
