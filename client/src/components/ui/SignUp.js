@@ -1,11 +1,9 @@
 import React from "react";
 import classnames from "classnames";
-import hash from "object-hash";
 import { v4 as getUuid } from "uuid";
 import { EMAIL_REGEX } from "../../utils/helpers";
 import { withRouter } from "react-router-dom";
 import axios from "axios";
-import actions from "../../store/actions";
 import { connect } from "react-redux";
 
 class SignUp extends React.Component {
@@ -91,31 +89,26 @@ class SignUp extends React.Component {
          this.state.hasEmailError === false &&
          this.state.hasPasswordError === false
       ) {
+         // create user obj
          const user = {
             id: getUuid(),
             email: emailInput,
-            password: hash(passwordInput),
+            password: passwordInput,
             createdAt: Date.now(),
          };
-         console.log(user);
+         // post to API
          axios
-            .get(
-               "https://raw.githubusercontent.com/Reina-git/white-bear-mpa/main/src/mock-data/user.json"
-            )
+            .post("/api/v1/users", user)
             .then((res) => {
-               // handle success
-               const currentUser = res.data;
-               console.log(currentUser);
-               this.props.dispatch({
-                  type: actions.UPDATE_CURRENT_USER,
-                  payload: res.data,
-               });
+               console.log(res);
             })
-            .catch((error) => {
-               // handle error
-               console.log(error);
+            .catch((err) => {
+               console.log(err);
             });
-         this.props.history.push("/create-answer");
+         // update current user in the global state with API response
+         //  this.props.history.push("/create-answer");
+
+         console.log(user);
       }
    }
 
