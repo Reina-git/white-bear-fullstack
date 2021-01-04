@@ -28,6 +28,7 @@ router.post("/", async (req, res) => {
 
       db.query(insertUser, user)
          .then(() => {
+            // TODO repeat when creating a user
             db.query(selectUserById, id)
                .then((users) => {
                   const user = users[0];
@@ -74,7 +75,7 @@ router.post("/auth", async (req, res) => {
             };
 
             const accessToken = jwt.sign(user, process.env.JWT_ACCESS_SECRET, {
-               expiresIn: "1m",
+               expiresIn: "100m",
             });
             res.status(200).json(accessToken);
          })

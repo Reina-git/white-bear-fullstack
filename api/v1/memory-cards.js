@@ -6,8 +6,8 @@ const selectAllCards = require("../../queries/selectAllCards");
 
 // @route GET api/v1/memory-cards
 // @desc    GET all memory cards for a user by search terms
-// @access
-router.get("/", (req, res) => {
+// @access Private
+router.get("/", validateJwt, (req, res) => {
    console.log(req.query);
    const { userId, searchTerm, order } = req.query;
    let constructedSearchTerm;
