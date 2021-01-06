@@ -1,14 +1,17 @@
 import React from "react";
 import AppTemplate from "../ui/AppTemplate";
-import { Link } from "react-router-dom";
 import classnames from "classnames";
-import { checkIsOver, MAX_CARD_CHARS } from "../../utils/helpers";
+import { checkIsOver, defaultLevel, MAX_CARD_CHARS } from "../../utils/helpers";
+import { connect } from "react-redux";
+import actions from "../../store/actions";
+import { v4 as getUuid } from "uuid";
+import getNextAttemptAt from "../../utils/getNextAttemptAt";
 
-export default class CreateAnswer extends React.Component {
+class CreateAnswer extends React.Component {
    constructor(props) {
       super(props);
       this.state = {
-         answerText: "",
+         answerText: this.props.creatableCard.answer || "",
       };
    }
    checkHasInvalidCharCount() {
@@ -23,6 +26,26 @@ export default class CreateAnswer extends React.Component {
    setAnswerText(e) {
       this.setState({ answerText: e.target.value });
    }
+
+   setCreatableCard() {
+      console.log("UPDATE_CREATABLE_CARD");
+      const currentTime = Date.now();
+      this.props.dispatch({
+         type: actions.UPDATE_CREATABLE_CARD,
+         payload: {
+            id: getUuid(),
+            answer: this.state.answerText,
+            imagery: "",
+            userId: this.props.currentUser.id,
+            createdAt: Date.now(),
+            nextAttemptAt: getNextAttemptAt(defaultLevel, currentTime), //
+            lastAttemptAt: Date.now(),
+            totalSuccessfulAttempts: 0,
+            level: 1,
+         },
+      });
+      this.props.history.push("/create-imagery");
+   }
    render() {
       return (
          <AppTemplate>
@@ -35,6 +58,7 @@ export default class CreateAnswer extends React.Component {
                      id="answerText"
                      autoFocus={true}
                      onChange={(e) => this.setAnswerText(e)}
+                     defaultValue={this.state.answerText}
                   ></textarea>
                </div>
             </div>
@@ -53,19 +77,27 @@ export default class CreateAnswer extends React.Component {
             </p>
             <div className="clearfix"></div>
 
-            <Link
-               to="/create-imagery"
-               id="save-card"
+            <button
                className={classnames(
                   "btn btn-outline-primary btn-lg ml-4 float-right",
                   {
                      disabled: this.checkHasInvalidCharCount(),
                   }
                )}
+               onClick={() => {
+                  this.setCreatableCard();
+               }}
             >
                Next
-            </Link>
+            </button>
          </AppTemplate>
       );
    }
 }
+function mapStateToProps(state) {
+   return {
+      currentUser: state.currentUser,
+      creatableCard: state.creatableCard,
+   };
+}
+export default connect(mapStateToProps)(CreateAnswer);

@@ -4,8 +4,13 @@ import AppTemplate from "../ui/AppTemplate";
 import { Link } from "react-router-dom";
 import classnames from "classnames";
 import { checkIsOver, MAX_CARD_CHARS } from "../../utils/helpers";
+import { connect } from "react-redux";
+import actions from "../../store/actions";
+import axios from "axios";
 
-export default class CreateImagery extends React.Component {
+// import actions from "../../store/actions";
+
+class CreateImagery extends React.Component {
    constructor(props) {
       super(props);
       this.state = {
@@ -25,27 +30,58 @@ export default class CreateImagery extends React.Component {
    setImageryText(e) {
       this.setState({ imageryText: e.target.value });
    }
+   async updateCreatableCard() {
+      console.log("updating creatable card");
+      const {
+         id,
+         answer,
+         userId,
+         createdAt,
+         nextAttemptAt,
+         lastAttemptAt,
+         totalSuccessfulAttempts,
+         level,
+      } = this.props.creatableCard;
+      await this.props.dispatch({
+         type: actions.UPDATE_CREATABLE_CARD,
+         payload: {
+            id,
+            answer,
+            imagery: this.state.imageryText,
+            userId,
+            createdAt,
+            nextAttemptAt, //
+            lastAttemptAt,
+            totalSuccessfulAttempts,
+            level,
+         },
+      });
+      // save to db - make an api call
+      axios
+         .post("/api/v1/memory-cards", this.props.creatableCard)
+         .then((res) => {
+            console.log("memory card created");
+            // display success overlay
+            // route to "/create-answer"
+            this.props.dispatch({
+               type: actions.UPDATE_CREATABLE_CARD,
+               payload: {},
+            });
+            this.props.history.push("/create-answer");
+         })
+         .catch((err) => {
+            const { data } = err.response;
+            console.log(data);
+            // display error overlay
+            // hide error overlay after 5 seconds
+            // stay on page
+         });
+      // go to create answer
+   }
 
    render() {
       return (
          <div>
-            <div
-               className="bg-success w=100 lead d-none justify-content-center fixed-top"
-               id="overlay-success"
-            >
-               <img src="icons/success.svg" width="32px" alt="" />
-               <p className="d-inline py-4 ml-2">Card created!</p>
-            </div>
-
-            <div
-               className="bg-danger w=100 lead d-none justify-content-center fixed-top"
-               id="overlay-error"
-            >
-               <img src="/icons/error.svg" width="32px" alt="" />
-               <p className="d-inline py-4 ml-2">
-                  Oops! Our bad. Please try again.
-               </p>
-            </div>
             <AppTemplate>
                <p className="text-center lead text-muted my-2">
                   {" "}
@@ -63,7 +99,7 @@ export default class CreateImagery extends React.Component {
                </div>
                <div className="card">
                   <div className="card-body bg-secondary lead">
-                     <textarea rows="6" id="answerText"></textarea>
+                     {this.props.creatableCard.answer}
                   </div>
                </div>
 
@@ -93,7 +129,9 @@ export default class CreateImagery extends React.Component {
                         disabled: this.checkHasInvalidCharCount(),
                      }
                   )}
-                  id="save-card"
+                  onClick={() => {
+                     this.updateCreatableCard();
+                  }}
                >
                   <img
                      src={saveLogo}
@@ -108,3 +146,8 @@ export default class CreateImagery extends React.Component {
       );
    }
 }
+
+function mapStateToProps(state) {
+   return { creatableCard: state.creatableCard };
+}
+export default connect(mapStateToProps)(CreateImagery);

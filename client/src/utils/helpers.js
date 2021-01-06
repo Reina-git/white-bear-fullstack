@@ -15,4 +15,6 @@ function checkIsOver(str, num) {
 
 const MAX_CARD_CHARS = 240;
 
-export { checkIsOver, MAX_CARD_CHARS, safelyParseJson };
+const defaultLevel = 1;
+
+export { checkIsOver, defaultLevel, MAX_CARD_CHARS, safelyParseJson };
