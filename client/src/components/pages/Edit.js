@@ -2,7 +2,6 @@ import React from "react";
 import SaveLogo from "../../icons/save.svg";
 import AppTemplate from "../ui/AppTemplate";
 import { Link } from "react-router-dom";
-import memoryCards from "../../mock-data/memory-cards";
 import toDisplayDate from "date-fns/format";
 import classnames from "classnames";
 import { connect } from "react-redux";
@@ -10,14 +9,14 @@ import { checkIsOver, MAX_CARD_CHARS } from "../../utils/helpers";
 import isEmpty from "lodash/isEmpty";
 import without from "lodash/without";
 import actions from "../../store/actions";
+import axios from "axios";
 
-const memoryCard = memoryCards[2];
 class Edit extends React.Component {
    constructor(props) {
       super(props);
       this.state = {
-         answerText: memoryCard.answer,
-         imageryText: memoryCard.imagery,
+         answerText: this.props.editableCard.card.answer,
+         imageryText: this.props.editableCard.card.imagery,
          isDisplayingDelete: false,
       };
    }
@@ -44,6 +43,40 @@ class Edit extends React.Component {
       this.setState({ answerText: e.target.value });
    }
 
+   saveCard() {
+      if (!this.checkHasInvalidCharCount()) {
+         // put into db
+         const memoryCard = { ...this.props.editableCard.card };
+         memoryCard.answer = this.state.answerText;
+         memoryCard.imagery = this.state.imageryText;
+         axios
+            .put(`/api/v1/memory-cards/${memoryCard.id}`, memoryCard)
+            .then((res) => {
+               console.log("memory card updated");
+
+               const cards = [...this.props.queue.cards];
+               cards[this.props.queue.index] = memoryCard;
+
+               this.props.dispatch({
+                  type: actions.UPDATE_QUEUED_CARDS,
+                  payload: cards,
+               });
+
+               // display success overlay
+               this.props.history.push(this.props.editableCard.prevRoute);
+            })
+            .catch((err) => {
+               const { data } = err.response;
+               console.log(data);
+               // display error overlay
+               // hide error overlay after 5 seconds
+               // stay on page
+            });
+      } else {
+         console.log("invalid char count");
+      }
+   }
+
    deleteCard() {
       if (this.props.editableCard.prevRoute === "/review-answer") {
          this.deleteCardFromStore();
@@ -59,7 +92,7 @@ class Edit extends React.Component {
       const filteredCards = without(cards, deletedCard);
       console.log(filteredCards);
       this.props.dispatch({
-         type: actions.STORE_QUEUED_CARDS,
+         type: actions.UPDATE_QUEUED_CARDS,
          payload: filteredCards,
       });
       if (filteredCards[this.props.queue.index] === undefined) {
@@ -144,12 +177,14 @@ class Edit extends React.Component {
                      Discard changes
                   </Link>
                   <div className="float-right">
-                     <Link
-                        to={this.props.editableCard.prevRoute}
+                     <button
                         id="edit-save-card"
                         className={classnames("btn btn-primary ml-4", {
                            disabled: this.checkHasInvalidCharCount(),
                         })}
+                        onClick={() => {
+                           this.saveCard();
+                        }}
                      >
                         <img
                            src={SaveLogo}
@@ -158,7 +193,7 @@ class Edit extends React.Component {
                            style={{ marginBottom: "5px", marginRight: "4px" }}
                         />
                         Save
-                     </Link>
+                     </button>
                   </div>
                   <div className="clearfix"></div>
                   <p className="text-center lead text-muted mt-5 mb-3">

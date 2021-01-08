@@ -31,12 +31,20 @@ router.post("/", async (req, res) => {
             // TODO repeat when creating a user
             db.query(selectUserById, id)
                .then((users) => {
-                  const user = users[0];
-                  res.status(200).json({
-                     id: user.id,
-                     email: user.email,
-                     createdAt: user.created_at,
-                  });
+                  const user = {
+                     id: users[0].id,
+                     email: users[0].email,
+                     createdAt: users[0].created_at,
+                  };
+
+                  const accessToken = jwt.sign(
+                     user,
+                     process.env.JWT_ACCESS_SECRET,
+                     {
+                        expiresIn: "100m",
+                     }
+                  );
+                  res.status(200).json(accessToken);
                })
                .catch((err) => {
                   console.log(err);
@@ -81,7 +89,7 @@ router.post("/auth", async (req, res) => {
          })
          .catch((err) => {
             console.log(err);
-            dbError = `${err.code} ${err.sqlMessage}`;
+            const dbError = `${err.code} ${err.sqlMessage}`;
             res.status(400).json({ dbError });
          });
    } else {

@@ -1,6 +1,7 @@
 import React from "react";
 import classnames from "classnames";
 import { v4 as getUuid } from "uuid";
+import jwtDecode from "jwt-decode";
 import { withRouter } from "react-router-dom";
 import axios from "axios";
 import { connect } from "react-redux";
@@ -37,12 +38,14 @@ class SignUp extends React.Component {
       axios
          .post("/api/v1/users", user)
          .then((res) => {
-            console.log(res.data);
+            const authToken = res.data;
+            localStorage.setItem("authToken", authToken);
+            const user = jwtDecode(authToken);
             this.props.dispatch({
                type: actions.UPDATE_CURRENT_USER,
-               payload: res.data,
+               payload: user,
             });
-
+            axios.defaults.headers.common["x-auth-token"] = authToken;
             this.props.history.push("/create-answer");
          })
          .catch((err) => {

@@ -30,53 +30,37 @@ class CreateImagery extends React.Component {
    setImageryText(e) {
       this.setState({ imageryText: e.target.value });
    }
-   async updateCreatableCard() {
-      console.log("updating creatable card");
-      const {
-         id,
-         answer,
-         userId,
-         createdAt,
-         nextAttemptAt,
-         lastAttemptAt,
-         totalSuccessfulAttempts,
-         level,
-      } = this.props.creatableCard;
-      await this.props.dispatch({
-         type: actions.UPDATE_CREATABLE_CARD,
-         payload: {
-            id,
-            answer,
-            imagery: this.state.imageryText,
-            userId,
-            createdAt,
-            nextAttemptAt, //
-            lastAttemptAt,
-            totalSuccessfulAttempts,
-            level,
-         },
-      });
-      // save to db - make an api call
-      axios
-         .post("/api/v1/memory-cards", this.props.creatableCard)
-         .then((res) => {
-            console.log("memory card created");
-            // display success overlay
-            // route to "/create-answer"
-            this.props.dispatch({
-               type: actions.UPDATE_CREATABLE_CARD,
-               payload: {},
-            });
-            this.props.history.push("/create-answer");
-         })
-         .catch((err) => {
-            const { data } = err.response;
-            console.log(data);
-            // display error overlay
-            // hide error overlay after 5 seconds
-            // stay on page
+   updateCreatableCard() {
+      if (!this.checkHasInvalidCharCount()) {
+         console.log("updating creatable card");
+         const creatableCard = { ...this.props.creatableCard };
+         creatableCard.imagery = this.state.imageryText;
+         this.props.dispatch({
+            type: actions.UPDATE_CREATABLE_CARD,
+            payload: creatableCard,
          });
-      // go to create answer
+         // save to db - make an api call
+         axios
+            .post("/api/v1/memory-cards", creatableCard)
+            .then((res) => {
+               console.log("memory card created");
+               // display success overlay
+               // route to "/create-answer"
+               this.props.dispatch({
+                  type: actions.UPDATE_CREATABLE_CARD,
+                  payload: {},
+               });
+               this.props.history.push("/create-answer");
+            })
+            .catch((err) => {
+               const { data } = err.response;
+               console.log(data);
+               // display error overlay
+               // hide error overlay after 5 seconds
+               // stay on page
+            });
+         // go to create answer
+      }
    }
 
    render() {

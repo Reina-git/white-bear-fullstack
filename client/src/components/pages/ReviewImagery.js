@@ -11,15 +11,14 @@ class ReviewImagery extends React.Component {
 
       if (props.queue.cards.length === 0) {
          axios
-            .get(
-               "https://raw.githubusercontent.com/Reina-git/white-bear-mpa/main/src/mock-data/memory-cards.json"
-            )
+            .get(`/api/v1/queue`)
             .then((res) => {
                // handle success
+               const cards = res.data;
                console.log(res);
                props.dispatch({
-                  type: actions.STORE_QUEUED_CARDS,
-                  payload: res.data,
+                  type: actions.UPDATE_QUEUED_CARDS,
+                  payload: cards,
                });
             })
             .catch((error) => {

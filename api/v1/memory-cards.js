@@ -5,6 +5,7 @@ const db = require("../../db");
 const selectAllCards = require("../../queries/selectAllCards");
 const validateJwt = require("../../utils/validatejwt");
 const insertMemoryCard = require("../../queries/insertMemoryCard");
+const updateMemoryCard = require("../../queries/updateMemoryCard");
 
 // @route GET api/v1/memory-cards
 // @desc    GET all memory cards for a user by search terms
@@ -41,11 +42,11 @@ router.get("/", validateJwt, (req, res) => {
                level: memoryCard.level,
             };
          });
-         res.json(camelCaseMemoryCards);
+         return res.status(200).json(camelCaseMemoryCards);
       })
       .catch((err) => {
          console.log(err);
-         res.status(400).json(err);
+         return res.status(400).json(err);
       });
 });
 
@@ -85,8 +86,50 @@ router.post("/", validateJwt, (req, res) => {
       })
       .catch((err) => {
          console.log(err);
-         dbError = `${err.code} ${err.sqlMessage}`;
+         const dbError = `${err.code} ${err.sqlMessage}`;
          res.status(400).json({ dbError });
+      });
+});
+
+// @route   Post api/v1/memory-cards/:id
+// @desc    Post all memory cards for a user by search terms
+// @access  Private
+
+router.put("/:id", validateJwt, (req, res) => {
+   const id = req.params.id;
+   const user = req.user;
+   const {
+      imagery,
+      answer,
+      createdAt,
+      nextAttemptAt,
+      lastAttemptAt,
+      totalSuccessfulAttempts,
+      level,
+   } = req.body;
+   const memoryCard = {
+      id,
+      imagery,
+      answer,
+      user_id: user.id,
+      created_at: createdAt,
+      nextAttempt_at: nextAttemptAt,
+      lastAttempt_at: lastAttemptAt,
+      total_successful_attempts: totalSuccessfulAttempts,
+      level,
+   };
+   console.log("memory card", memoryCard);
+   db.query(updateMemoryCard, [memoryCard, id])
+      .then((dbRes) => {
+         // success
+         console.log("Updated memory card in te db:", dbRes);
+         // return with a status response
+         return res.status(200).json({ success: "card created" });
+      })
+      .catch((err) => {
+         console.log(err);
+         const dbError = `${err.code} ${err.sqlMessage}`;
+         return res.status(400).json({ dbError });
       });
 });
 
