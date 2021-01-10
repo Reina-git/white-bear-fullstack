@@ -40,34 +40,43 @@ class ReviewImagery extends React.Component {
       console.log("memoryCard", this.props.queue);
       return (
          <AppTemplate>
-            <div className="card">
-               <div className="card">
-                  <div className="card-body bg-primary lead">
-                     {memoryCard && memoryCard.imagery}
+            <div className="mb-5"></div>
+            {memoryCard && (
+               <>
+                  <div className="card">
+                     <div className="card-body bg-primary lead">
+                        {memoryCard && memoryCard.imagery}
+                     </div>
                   </div>
-               </div>
-               <div className="d-inline mt-5">
-                  {this.props.queue.index > 0 && (
-                     <button
-                        className="btn btn-link"
-                        onClick={() => {
-                           this.goToPrevCard();
-                        }}
-                     >
-                        Previous Card
-                     </button>
-                  )}
+                  <div className="d-inline mt-5">
+                     {this.props.queue.index > 0 && (
+                        <button
+                           className="btn btn-link"
+                           onClick={() => {
+                              this.goToPrevCard();
+                           }}
+                        >
+                           Previous Card
+                        </button>
+                     )}
 
-                  <div className="float-right">
-                     <Link
-                        to="/review-answer"
-                        className="btn btn-outline-primary"
-                     >
-                        Show answer
-                     </Link>
+                     <div className="float-right mt-3">
+                        <Link
+                           to="/review-answer"
+                           className="btn btn-outline-primary"
+                        >
+                           Show answer
+                        </Link>
+                     </div>
                   </div>
-               </div>
-            </div>
+                  {/* </div> */}
+               </>
+            )}
+            {!memoryCard && (
+               <p className="lead text-muted">
+                  You have 0 cards. Please create a card before reviewing.
+               </p>
+            )}
          </AppTemplate>
       );
    }

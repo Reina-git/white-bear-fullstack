@@ -78,28 +78,34 @@ class Edit extends React.Component {
    }
 
    deleteCard() {
-      if (this.props.editableCard.prevRoute === "/review-answer") {
-         this.deleteCardFromStore();
-      }
-      if (this.props.editableCard.prevRoute === "/all-cards") {
-         this.props.history.push("/all-cards");
-      }
-   }
-
-   deleteCardFromStore() {
-      const deletedCard = this.props.editableCard.card;
-      const cards = this.props.queue.cards;
-      const filteredCards = without(cards, deletedCard);
-      console.log(filteredCards);
-      this.props.dispatch({
-         type: actions.UPDATE_QUEUED_CARDS,
-         payload: filteredCards,
-      });
-      if (filteredCards[this.props.queue.index] === undefined) {
-         this.props.history.push("/review-empty");
-      } else {
-         this.props.history.push("/review-imagery");
-      }
+      const memoryCard = { ...this.props.editableCard.card };
+      // query db to delete card
+      axios
+         .delete(`/api/v1/memory-cards/${memoryCard.id}`)
+         .then((res) => {
+            console.log(res.data);
+            const cards = [...this.props.queue.cards];
+            const filteredCards = without(cards, memoryCard);
+            this.props.dispatch({
+               type: actions.UPDATE_QUEUED_CARDS,
+               payload: filteredCards,
+            });
+            //   TODO display success overlay
+            if (this.props.editableCard.prevRoute === "/review-answer") {
+               if (filteredCards[this.props.queue.index] === undefined) {
+                  this.props.history.push("/review-empty");
+               } else {
+                  this.props.history.push("/review-imagery");
+               }
+            }
+            if (this.props.editableCard.prevRoute === "/all-cards") {
+               this.props.history.push("/all-cards");
+            }
+         })
+         .catch((err) => {
+            console.log(err.response.data);
+            // TODO: Display error overlay
+         });
    }
 
    // changeRoute(prevRoute) {
