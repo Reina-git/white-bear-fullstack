@@ -7,7 +7,6 @@ import classnames from "classnames";
 import { connect } from "react-redux";
 import { checkIsOver, MAX_CARD_CHARS } from "../../utils/helpers";
 import isEmpty from "lodash/isEmpty";
-import without from "lodash/without";
 import actions from "../../store/actions";
 import axios from "axios";
 
@@ -84,8 +83,11 @@ class Edit extends React.Component {
          .delete(`/api/v1/memory-cards/${memoryCard.id}`)
          .then((res) => {
             console.log(res.data);
+            const deletableCard = this.props.editableCard.card;
             const cards = [...this.props.queue.cards];
-            const filteredCards = without(cards, memoryCard);
+            const filteredCards = cards.filter((card) => {
+               return card.id !== deletableCard.id;
+            });
             this.props.dispatch({
                type: actions.UPDATE_QUEUED_CARDS,
                payload: filteredCards,

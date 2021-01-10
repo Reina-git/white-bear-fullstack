@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 
 class MemoryCard extends React.Component {
    storeEditableCard(memoryCard) {
-      console.log("Store EDITABLE CARD");
+      console.log("Store EDITABLE CARD", memoryCard);
       this.props.dispatch({
          type: actions.STORE_EDITABLE_CARD,
          payload: {
@@ -17,7 +17,7 @@ class MemoryCard extends React.Component {
    }
 
    render() {
-      const memoryCard = this.props.queue.cards[this.props.queue.index];
+      const memoryCard = this.props.card;
       return (
          <div className="d-flex align-items-start mb-5">
             <div className="app-card flex-fill">
@@ -57,8 +57,6 @@ class MemoryCard extends React.Component {
    }
 }
 function mapStateToProps(state) {
-   return {
-      queue: state.queue,
-   };
+   return {};
 }
 export default connect(mapStateToProps)(MemoryCard);
