@@ -114,7 +114,8 @@ class SignUp extends React.Component {
                         </p>
                         <div className="input-group mb-3 mt-2">
                            <input
-                              type="text"
+                              type="password"
+                              name="password"
                               id="sign-up-password-input"
                               aria-label="Sizing example input"
                               aria-describedby="inputGroup-sizing-default"
