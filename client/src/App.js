@@ -9,6 +9,7 @@ import ReviewAnswer from "./components/pages/ReviewAnswer";
 import AllCards from "./components/pages/AllCards";
 import ReviewEmpty from "./components/pages/ReviewEmpty";
 import Edit from "./components/pages/Edit";
+import S3 from "./components/pages/S3";
 import NotFound from "./components/pages/NotFound";
 import jwtDecode from "jwt-decode";
 import store from "./store/store";
@@ -57,6 +58,7 @@ function App() {
             <Route exact path="/all-cards" component={AllCards} />
             <Route exact path="/review-empty" component={ReviewEmpty} />
             <Route exact path="/edit" component={Edit} />
+            <Route exact path="/s3" component={S3} />
             <Route component={NotFound} />
          </Switch>
       </Router>

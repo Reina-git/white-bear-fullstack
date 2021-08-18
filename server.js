@@ -10,6 +10,7 @@ app.use(cors());
 app.use("/api/v1/memory-cards", require("./api/v1/memory-cards"));
 app.use("/api/v1/users", require("./api/v1/users"));
 app.use("/api/v1/queue", require("./api/v1/queue"));
+app.use("/api/v1/test-user", require("./api/v1/test-user"));
 
 app.use(express.static("client/build"));
 
