@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../../db");
 const selectQueue = require("../../queries/selectQueue");
-const validateJwt = require("../../utils/validatejwt");
+const validateJwt = require("../../utils/validateJwt");
 
 // @route GET api/v1/queue
 // @desc    GET all memory cards for a user by search terms
