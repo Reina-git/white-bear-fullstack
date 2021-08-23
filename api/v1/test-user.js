@@ -7,6 +7,7 @@ const upload = require("../../upload");
 // @route      POST api/v1/test-user
 // @desc       Create a new test user in the test users resource
 // @access     Private
+// testing
 router.post("/", validateJwt, (req, res) => {
    upload.single("profile-photo")(req, res, (err) => {
       if (!req.file && !err) {
